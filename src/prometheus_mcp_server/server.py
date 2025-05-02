@@ -12,7 +12,7 @@ import requests
 from mcp.server.fastmcp import FastMCP
 
 dotenv.load_dotenv()
-mcp = FastMCP(name="Prometheus MCP", host="0.0.0.0", port=8000)
+mcp = FastMCP(name="Prometheus MCP", host="0.0.0.0", port=8000, auth_required=False)
 
 @dataclass
 class PrometheusConfig:
@@ -141,7 +141,3 @@ async def get_targets() -> Dict[str, List[Dict[str, Any]]]:
         "activeTargets": data["activeTargets"],
         "droppedTargets": data["droppedTargets"]
     }
-
-if __name__ == "__main__":
-    print(f"Starting Prometheus MCP Server...")
-    mcp.run()
