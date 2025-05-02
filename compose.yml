@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - PROMETHEUS_URL=http://192.168.1.5:9090
+      - PROMETHEUS_URL=http://10.104.0.3:9090
       - PROMETHEUS_USERNAME=${PROMETHEUS_USERNAME:-}
       - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD:-}
       - PROMETHEUS_TOKEN=${PROMETHEUS_TOKEN:-}
