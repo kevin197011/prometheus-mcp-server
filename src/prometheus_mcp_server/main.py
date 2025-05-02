@@ -1,49 +1,43 @@
 #!/usr/bin/env python
 import sys
-import os
-from dotenv import load_dotenv, find_dotenv
+import dotenv
 from prometheus_mcp_server.server import mcp, config
 
 def setup_environment():
-    # 加载 .env 文件中的环境变量
-    if load_dotenv(find_dotenv()):
-        print("✅ 已加载 .env 文件中的环境变量")
+    if dotenv.load_dotenv():
+        print("Loaded environment variables from .env file")
     else:
-        print("⚠️ 未找到 .env 文件，使用系统环境变量")
+        print("No .env file found or could not load it - using environment variables")
 
-    # 验证 Prometheus URL 是否设置
     if not config.url:
-        print("❌ 错误：未设置 PROMETHEUS_URL 环境变量")
-        print("请设置为 Prometheus 服务器的 URL，例如：http://localhost:9090")
+        print("ERROR: PROMETHEUS_URL environment variable is not set")
+        print("Please set it to your Prometheus server URL")
+        print("Example: http://your-prometheus-server:9090")
         return False
 
-    # 显示配置信息
-    print("\n🔧 Prometheus 配置：")
-    print(f"  📡 服务器地址：{config.url}")
+    print(f"Prometheus configuration:")
+    print(f"  Server URL: {config.url}")
 
-    # 显示认证方式
     if config.username and config.password:
-        print("  🔐 认证方式：基本认证（Basic Auth）")
+        print("Authentication: Using basic auth")
     elif config.token:
-        print("  🔐 认证方式：Bearer Token")
+        print("Authentication: Using bearer token")
     else:
-        print("  ⚠️ 未设置认证信息，可能无法访问受保护的 Prometheus 实例")
+        print("Authentication: None (no credentials provided)")
 
     return True
 
 def run_server():
-    """启动 Prometheus MCP Server 的主函数"""
+    """Main entry point for the Prometheus MCP Server"""
+    # Setup environment
     if not setup_environment():
         sys.exit(1)
 
-    print("\n🚀 启动 Prometheus MCP Server...")
-    print("📡 使用 SSE 传输模式运行服务器")
+    print("\nStarting Prometheus MCP Server...")
+    print("Running server in standard mode...")
 
-    try:
-        mcp.run(transport="sse")
-    except Exception as e:
-        print(f"❌ 服务器启动失败：{e}")
-        sys.exit(1)
+    # Run the server with the stdio transport
+    mcp.run(transport="sse")
 
 if __name__ == "__main__":
     run_server()
