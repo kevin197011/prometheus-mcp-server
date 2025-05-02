@@ -1,43 +1,49 @@
 #!/usr/bin/env python
 import sys
-import dotenv
+import os
+from dotenv import load_dotenv, find_dotenv
 from prometheus_mcp_server.server import mcp, config
 
 def setup_environment():
-    if dotenv.load_dotenv():
-        print("Loaded environment variables from .env file")
+    # 加载 .env 文件中的环境变量
+    if load_dotenv(find_dotenv()):
+        print("✅ 已加载 .env 文件中的环境变量")
     else:
-        print("No .env file found or could not load it - using environment variables")
+        print("⚠️ 未找到 .env 文件，使用系统环境变量")
 
+    # 验证 Prometheus URL 是否设置
     if not config.url:
-        print("ERROR: PROMETHEUS_URL environment variable is not set")
-        print("Please set it to your Prometheus server URL")
-        print("Example: http://your-prometheus-server:9090")
+        print("❌ 错误：未设置 PROMETHEUS_URL 环境变量")
+        print("请设置为 Prometheus 服务器的 URL，例如：http://localhost:9090")
         return False
-    
-    print(f"Prometheus configuration:")
-    print(f"  Server URL: {config.url}")
-    
+
+    # 显示配置信息
+    print("\n🔧 Prometheus 配置：")
+    print(f"  📡 服务器地址：{config.url}")
+
+    # 显示认证方式
     if config.username and config.password:
-        print("Authentication: Using basic auth")
+        print("  🔐 认证方式：基本认证（Basic Auth）")
     elif config.token:
-        print("Authentication: Using bearer token")
+        print("  🔐 认证方式：Bearer Token")
     else:
-        print("Authentication: None (no credentials provided)")
-    
+        print("  ⚠️ 未设置认证信息，可能无法访问受保护的 Prometheus 实例")
+
     return True
 
 def run_server():
-    """Main entry point for the Prometheus MCP Server"""
-    # Setup environment
+    """启动 Prometheus MCP Server 的主函数"""
     if not setup_environment():
         sys.exit(1)
-    
-    print("\nStarting Prometheus MCP Server...")
-    print("Running server in standard mode...")
-    
-    # Run the server with the stdio transport
-    mcp.run(transport="stdio")
+
+    print("\n🚀 启动 Prometheus MCP Server...")
+    print("📡 使用 SSE 传输模式运行服务器")
+
+    try:
+        mcp.run(transport="sse")
+    except Exception as e:
+        print(f"❌ 服务器启动失败：{e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     run_server()

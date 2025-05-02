@@ -43,9 +43,6 @@ PROMETHEUS_PASSWORD=your_password
 
 # For bearer token auth
 PROMETHEUS_TOKEN=your_token
-
-# Optional: For multi-tenant setups like Cortex, Mimir or Thanos
-ORG_ID=your_organization_id
 ```
 
 3. Add the server configuration to your client configuration file. For example, for Claude Desktop:

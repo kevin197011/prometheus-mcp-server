@@ -1,15 +1,14 @@
-version: '3.8'
-
 services:
   prometheus-mcp-server:
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      - PROMETHEUS_URL=${PROMETHEUS_URL}
+      - PROMETHEUS_URL=http://192.168.1.5:9090
       - PROMETHEUS_USERNAME=${PROMETHEUS_USERNAME:-}
       - PROMETHEUS_PASSWORD=${PROMETHEUS_PASSWORD:-}
       - PROMETHEUS_TOKEN=${PROMETHEUS_TOKEN:-}
     restart: unless-stopped
-    stdin_open: true
+    ports:
+      - "8000:8000"
     tty: true
